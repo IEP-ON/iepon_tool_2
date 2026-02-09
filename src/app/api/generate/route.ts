@@ -4,9 +4,10 @@ import { generatePrompt } from '@/lib/prompts';
 import { WritingType, WritingLevel } from '@/types/writing';
 import { resolveTemplate } from '@/lib/hangul';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// 런타임에만 초기화 (빌드 타임 에러 방지)
+function getOpenAI() {
+  return new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
+}
 
 // Level 1용 템플릿 기반 텍스트 생성 (resolveTemplate 활용으로 조사 자동 처리)
 function generateFromTemplate(template: string, answers: Record<string, string>): string {
@@ -44,7 +45,7 @@ export async function POST(req: Request) {
     if (level === 'level1' && resultTemplate) {
       const templateText = generateFromTemplate(resultTemplate, cleanedAnswers);
       
-      const completion = await openai.chat.completions.create({
+      const completion = await getOpenAI().chat.completions.create({
         model: "gpt-4o-mini",
         messages: [
           { 
@@ -76,7 +77,7 @@ export async function POST(req: Request) {
     else {
       const systemPrompt = generatePrompt(type as WritingType, cleanedAnswers, level);
 
-      const completion = await openai.chat.completions.create({
+      const completion = await getOpenAI().chat.completions.create({
         model: "gpt-4o-mini",
         messages: [
           { role: "system", content: systemPrompt },
