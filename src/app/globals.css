@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@layer base {
+  body {
+    @apply bg-white text-neutral-900 font-sans antialiased;
+  }
+  
+  h1 {
+    @apply text-4xl font-bold tracking-tight lg:text-5xl;
+  }
+  
+  h2 {
+    @apply text-3xl font-semibold tracking-tight;
+  }
+  
+  h3 {
+    @apply text-2xl font-semibold tracking-tight;
+  }
+  
+  h4 {
+    @apply text-xl font-medium tracking-tight;
+  }
+  
+  p {
+    @apply leading-7 text-neutral-700;
+  }
+}
+
+@layer components {
+  /* 가이드 3.2 컨테이너 클래스 */
+  .main-container {
+    @apply w-full max-w-[1440px] mx-auto px-4 md:px-6 lg:px-8 min-w-[320px];
+  }
+  
+  .wide-container {
+    @apply w-full max-w-[1600px] mx-auto px-4 md:px-8;
+  }
+  
+  .narrow-container {
+    @apply w-full max-w-[1024px] mx-auto px-4 md:px-6;
+  }
+}
+
+/* 인쇄용 스타일 */
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+    background: white;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .print-container {
+    box-shadow: none !important;
+    margin: 0 !important;
+    width: 210mm !important;
+    height: 297mm !important;
+    padding: 20mm !important; /* 컴포넌트 인라인 스타일 오버라이드 */
+  }
+}
