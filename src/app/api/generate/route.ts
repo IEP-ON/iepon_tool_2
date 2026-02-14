@@ -4,6 +4,8 @@ import { generatePrompt } from '@/lib/prompts';
 import { WritingType, WritingLevel } from '@/types/writing';
 import { resolveTemplate } from '@/lib/hangul';
 
+export const runtime = 'nodejs';
+
 // 런타임에만 초기화 (빌드 타임 에러 방지)
 function getOpenAI() {
   const apiKey = process.env.OPENAI_API_KEY;
