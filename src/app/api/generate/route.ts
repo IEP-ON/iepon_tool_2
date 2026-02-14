@@ -1,4 +1,3 @@
-import { OpenAI } from 'openai';
 import { NextResponse } from 'next/server';
 import { generatePrompt } from '@/lib/prompts';
 import { WritingType, WritingLevel } from '@/types/writing';
@@ -6,13 +5,38 @@ import { resolveTemplate } from '@/lib/hangul';
 
 export const runtime = 'nodejs';
 
-// 런타임에만 초기화 (빌드 타임 에러 방지)
-function getOpenAI() {
+// OpenAI Chat Completions API를 fetch로 직접 호출
+async function callOpenAI(
+  messages: { role: string; content: string }[],
+  temperature: number,
+  max_tokens: number,
+): Promise<string> {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     throw new Error('OPENAI_API_KEY 환경변수가 설정되지 않았습니다.');
   }
-  return new OpenAI({ apiKey });
+
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: 'gpt-4o-mini',
+      messages,
+      temperature,
+      max_tokens,
+    }),
+  });
+
+  if (!res.ok) {
+    const errBody = await res.text();
+    throw new Error(`OpenAI API ${res.status}: ${errBody}`);
+  }
+
+  const data = await res.json();
+  return data.choices?.[0]?.message?.content || '';
 }
 
 // Level 1용 템플릿 기반 텍스트 생성 (resolveTemplate 활용으로 조사 자동 처리)
@@ -51,9 +75,8 @@ export async function POST(req: Request) {
     if (level === 'level1' && resultTemplate) {
       const templateText = generateFromTemplate(resultTemplate, cleanedAnswers);
       
-      const completion = await getOpenAI().chat.completions.create({
-        model: "gpt-4o-mini",
-        messages: [
+      content = await callOpenAI(
+        [
           { 
             role: "system", 
             content: `당신은 초등학교 특수교육대상학생(지적장애, 자폐성장애 등)의 글쓰기를 돕는 선생님입니다.
@@ -73,27 +96,22 @@ export async function POST(req: Request) {
             content: `다음 문장을 자연스럽게 다듬어주세요:\n\n${templateText}` 
           }
         ],
-        temperature: 0.3,
-        max_tokens: 300,
-      });
-      
-      content = completion.choices[0].message.content || templateText;
+        0.3,
+        300,
+      ) || templateText;
     } 
     // Level 2: AI가 전체 글 작성
     else {
       const systemPrompt = generatePrompt(type as WritingType, cleanedAnswers, level);
 
-      const completion = await getOpenAI().chat.completions.create({
-        model: "gpt-4o-mini",
-        messages: [
+      content = await callOpenAI(
+        [
           { role: "system", content: systemPrompt },
           { role: "user", content: "학생의 답변을 바탕으로 글을 작성해주세요." }
         ],
-        temperature: 0.5,
-        max_tokens: 500,
-      });
-
-      content = completion.choices[0].message.content || '';
+        0.5,
+        500,
+      );
     }
 
     return NextResponse.json({ content });
