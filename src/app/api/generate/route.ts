@@ -6,7 +6,11 @@ import { resolveTemplate } from '@/lib/hangul';
 
 // 런타임에만 초기화 (빌드 타임 에러 방지)
 function getOpenAI() {
-  return new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    throw new Error('OPENAI_API_KEY 환경변수가 설정되지 않았습니다.');
+  }
+  return new OpenAI({ apiKey });
 }
 
 // Level 1용 템플릿 기반 텍스트 생성 (resolveTemplate 활용으로 조사 자동 처리)
@@ -91,10 +95,11 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ content });
-  } catch (error) {
-    console.error('OpenAI API Error:', error);
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : String(error);
+    console.error('OpenAI API Error:', errMsg);
     return NextResponse.json(
-      { error: '글을 생성하는 도중 문제가 발생했습니다.' },
+      { error: '글을 생성하는 도중 문제가 발생했습니다.', details: errMsg },
       { status: 500 }
     );
   }
