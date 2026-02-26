@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>글쓰기 도우미 피드 5 - 글 자동 생성</title>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        
+        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #333; font-family: 'Pretendard', sans-serif; }
+        .feed-container { 
+            width: 1080px; height: 1080px; background: #f9f0df; position: relative; overflow: hidden; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            box-shadow: 0 0 50px rgba(0,0,0,0.5); 
+        }
+        
+        .header { text-align: center; margin-bottom: 40px; z-index: 10; }
+        .step-badge { background: #0891b2; color: white; padding: 10px 24px; border-radius: 50px; font-weight: 800; font-size: 22px; display: inline-block; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .title { font-size: 60px; font-weight: 900; color: #4a3b32; margin: 0 0 10px 0; line-height: 1.3; }
+        .highlight { color: #0891b2; }
+        .subtitle { font-size: 32px; font-weight: 600; color: #786860; margin: 0; }
+        
+        .mockup-container {
+            width: 850px; z-index: 10; display: flex; flex-direction: column; gap: 20px;
+        }
+        
+        .input-summary {
+            background: rgba(255,255,255,0.9); border-radius: 24px; padding: 25px 30px;
+            box-shadow: 0 10px 20px rgba(74,59,50,0.08); border: 3px solid #fff;
+            display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: center;
+        }
+        .summary-chip {
+            background: #ecfeff; border: 2px solid #a5f3fc; border-radius: 50px;
+            padding: 10px 18px; font-size: 20px; font-weight: 700; color: #155e75;
+        }
+        .arrow-down { text-align: center; font-size: 50px; color: #0891b2; z-index: 10; }
+        
+        .result-card {
+            background: white; border-radius: 24px; padding: 35px 40px;
+            box-shadow: 0 20px 40px rgba(74,59,50,0.1); border: 4px solid #cffafe;
+            position: relative;
+        }
+        .result-label {
+            position: absolute; top: -18px; left: 40px; background: #0891b2; color: white;
+            padding: 8px 24px; border-radius: 50px; font-size: 20px; font-weight: 800;
+        }
+        .result-text {
+            font-size: 30px; font-weight: 600; color: #1c1917; line-height: 1.8;
+            word-break: keep-all; font-family: serif;
+        }
+        .result-highlight { background: #ecfeff; padding: 2px 6px; border-radius: 6px; }
+        
+        .deco-circle { position: absolute; width: 800px; height: 800px; border-radius: 50%; background: #67e8f9; opacity: 0.15; top: -200px; left: -200px; filter: blur(100px); }
+        .deco-circle-2 { position: absolute; width: 600px; height: 600px; border-radius: 50%; background: #a5f3fc; opacity: 0.2; bottom: -150px; right: -150px; filter: blur(80px); }
+    </style>
+</head>
+<body>
+    <div class="feed-container">
+        <div class="deco-circle"></div>
+        <div class="deco-circle-2"></div>
+        
+        <div class="header">
+            <div class="step-badge">핵심 기능 3. 자동 글 완성</div>
+            <h1 class="title">학생 답변으로<br><span class="highlight">자연스러운 글</span> 완성!</h1>
+            <p class="subtitle">선생님이 글을 다듬어줘요</p>
+        </div>
+        
+        <div class="mockup-container">
+            <div class="input-summary">
+                <div class="summary-chip">📅 오늘</div>
+                <div class="summary-chip">👥 엄마랑 공원에서</div>
+                <div class="summary-chip">🎯 자전거 탔어요</div>
+                <div class="summary-chip">😊 신났어요</div>
+            </div>
+            
+            <div class="arrow-down">⬇️</div>
+            
+            <div class="result-card">
+                <div class="result-label">✨ 완성된 글</div>
+                <div class="result-text">
+                    오늘 <span class="result-highlight">엄마</span>랑 <span class="result-highlight">공원</span>에 갔어요.<br>
+                    공원에서 <span class="result-highlight">자전거</span>를 탔어요.<br>
+                    바람이 시원해서 기분이 좋았어요.<br>
+                    정말 <span class="result-highlight">신나는</span> 하루였어요!
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -5,7 +5,7 @@ import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { useReactToPrint } from 'react-to-print';
 import { Button } from '@/components/ui/Button';
 import { HandwritingGrid } from '@/components/print/HandwritingGrid';
-import { Loader2, Printer, Home, RefreshCw } from 'lucide-react';
+import { Loader2, Printer, Home, RefreshCw, Pencil, Check, X } from 'lucide-react';
 import { WRITING_TYPES } from '@/lib/questions';
 
 import { saveToHistory } from '@/lib/storage';
@@ -25,6 +25,9 @@ export default function ResultPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
   const [textOpacity, setTextOpacity] = useState(0.2);
+  const [error, setError] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editContent, setEditContent] = useState('');
   
   const printRef = useRef<HTMLDivElement>(null);
 
@@ -108,7 +111,7 @@ export default function ResultPage() {
 
     } catch (error) {
       console.error('Generation failed:', error);
-      alert('글 생성에 실패했습니다. 다시 시도해주세요.');
+      setError(error instanceof Error ? error.message : '글 생성에 실패했습니다.');
     } finally {
       setIsGenerating(false);
       setIsLoading(false);
@@ -120,11 +123,33 @@ export default function ResultPage() {
       <div className="min-h-screen flex flex-col items-center justify-center p-4">
         <Loader2 className="w-12 h-12 text-primary-500 animate-spin mb-4" />
         <p className="text-xl font-medium text-neutral-900">
-          AI 선생님이 글을 다듬고 있어요...
+          선생님이 글을 다듬고 있어요...
         </p>
         <p className="text-sm text-neutral-500 mt-2">
           잠시만 기다려주세요!
         </p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <div className="text-center max-w-md">
+          <div className="text-5xl mb-4">😕</div>
+          <h2 className="text-xl font-bold text-neutral-900 mb-2">글을 만들지 못했어요</h2>
+          <p className="text-neutral-600 text-sm mb-6">잠시 후 다시 시도해 주세요.</p>
+          <div className="flex gap-3 justify-center">
+            <Button variant="outline" onClick={() => { localStorage.removeItem(`writing-${typeId}`); router.push('/'); }}>
+              <Home className="w-4 h-4 mr-2" />
+              처음으로
+            </Button>
+            <Button variant="primary" onClick={() => { setError(null); generateText(answers); }}>
+              <RefreshCw className="w-4 h-4 mr-2" />
+              다시 시도
+            </Button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -166,7 +191,7 @@ export default function ResultPage() {
           </div>
           
           <div className="flex flex-wrap gap-2 w-full lg:w-auto justify-end">
-            <Button variant="outline" onClick={() => router.push('/')} className="flex-1 sm:flex-none justify-center">
+            <Button variant="outline" onClick={() => { localStorage.removeItem(`writing-${typeId}`); router.push('/'); }} className="flex-1 sm:flex-none justify-center">
               <Home className="w-4 h-4 mr-2" />
               처음으로
             </Button>
@@ -174,6 +199,35 @@ export default function ResultPage() {
               <RefreshCw className="w-4 h-4 mr-2" />
               다시 쓰기
             </Button>
+            <Button
+              variant={isEditing ? 'primary' : 'outline'}
+              onClick={() => {
+                if (isEditing) {
+                  // 수정 확정
+                  setContent(editContent);
+                  const saved = localStorage.getItem(`writing-${typeId}`);
+                  if (saved) {
+                    const parsed = JSON.parse(saved);
+                    localStorage.setItem(`writing-${typeId}`, JSON.stringify({ ...parsed, generatedText: editContent, updatedAt: Date.now() }));
+                  }
+                  saveToHistory({ type: typeId, title: `${new Date().toLocaleDateString()} ${config?.title || ''}`, content: editContent, answers });
+                  setIsEditing(false);
+                } else {
+                  setEditContent(content);
+                  setIsEditing(true);
+                }
+              }}
+              className="flex-1 sm:flex-none justify-center"
+            >
+              {isEditing ? <Check className="w-4 h-4 mr-2" /> : <Pencil className="w-4 h-4 mr-2" />}
+              {isEditing ? '수정 완료' : '수정하기'}
+            </Button>
+            {isEditing && (
+              <Button variant="outline" onClick={() => setIsEditing(false)} className="flex-1 sm:flex-none justify-center">
+                <X className="w-4 h-4 mr-2" />
+                취소
+              </Button>
+            )}
             <Button variant="primary" onClick={() => handlePrint && handlePrint()} className="w-full sm:w-auto justify-center">
               <Printer className="w-4 h-4 mr-2" />
               인쇄하기
@@ -181,12 +235,27 @@ export default function ResultPage() {
           </div>
         </div>
 
+        {/* 편집 모드 */}
+        {isEditing && (
+          <div className="mb-6 bg-white p-4 sm:p-6 rounded-2xl border border-primary-200 shadow-sm">
+            <label className="block text-sm font-semibold text-neutral-700 mb-2">✨ 글 내용 수정</label>
+            <textarea
+              value={editContent}
+              onChange={(e) => setEditContent(e.target.value)}
+              rows={10}
+              className="w-full p-4 text-base border-2 border-neutral-200 rounded-xl focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none transition-colors resize-y placeholder:text-neutral-400 font-serif leading-relaxed"
+              autoFocus
+            />
+            <p className="text-xs text-neutral-500 mt-2">수정 후 &apos;수정 완료&apos; 버튼을 누르면 경필쓰기 칸에 반영됩니다.</p>
+          </div>
+        )}
+
         {/* 미리보기 영역 */}
         <div className="flex justify-center overflow-hidden bg-neutral-200/50 p-4 sm:p-8 rounded-2xl shadow-inner border border-neutral-200 min-h-[500px]">
           <div className="scale-[0.45] xs:scale-[0.5] sm:scale-[0.6] md:scale-[0.8] lg:scale-100 origin-top transition-transform duration-300 ease-out will-change-transform">
             <HandwritingGrid
               ref={printRef}
-              content={content}
+              content={isEditing ? editContent : content}
               hasPictureArea={typeId === 'picture-diary'}
               date={answers['date']}
               textOpacity={textOpacity}

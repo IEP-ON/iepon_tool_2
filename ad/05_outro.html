@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>인스타 피드 5 - 마지막 안내</title>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        
+        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #333; font-family: 'Pretendard', sans-serif; }
+        .feed-container { 
+            width: 1080px; 
+            height: 1080px; 
+            background: #f9f0df; 
+            position: relative; 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            box-shadow: 0 0 50px rgba(0,0,0,0.5); 
+            text-align: center; 
+        }
+        
+        .deco-circle { 
+            position: absolute; 
+            width: 800px; 
+            height: 800px; 
+            border-radius: 50%; 
+            background: #818cf8; /* Indigo-400 */
+            opacity: 0.15; 
+            top: -200px; 
+            left: -200px; 
+            filter: blur(100px); 
+        }
+        .deco-circle-2 { 
+            position: absolute; 
+            width: 700px; 
+            height: 700px; 
+            border-radius: 50%; 
+            background: #34d399; /* Emerald-400 */
+            opacity: 0.15; 
+            bottom: -150px; 
+            right: -150px; 
+            filter: blur(80px); 
+        }
+        
+        .icon-box { 
+            font-size: 120px; 
+            margin-bottom: 50px; 
+            text-shadow: 0 10px 20px rgba(0,0,0,0.1); 
+            z-index: 10; 
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .title { 
+            font-size: 84px; 
+            font-weight: 900; 
+            color: #4a3b32; 
+            margin: 0 0 40px 0; 
+            line-height: 1.3; 
+            z-index: 10; 
+            word-break: keep-all; 
+        }
+        
+        .highlight { color: #6366f1; }
+        
+        .url-box { 
+            background: rgba(255, 255, 255, 0.9); 
+            border: 4px solid #fff; 
+            padding: 30px 70px; 
+            border-radius: 30px; 
+            font-size: 52px; 
+            font-weight: 800; 
+            color: #4f46e5; 
+            margin: 40px 0 60px 0; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 20px; 
+            z-index: 10; 
+            box-shadow: 0 20px 40px rgba(79, 70, 229, 0.15);
+        }
+        
+        .url-icon { font-size: 50px; }
+        
+        .footer-text { 
+            font-size: 36px; 
+            font-weight: 600; 
+            color: #786860; 
+            z-index: 10; 
+            margin-bottom: 40px;
+        }
+        
+        .btn-large { 
+            background: #4f46e5; 
+            color: white; 
+            padding: 30px 80px; 
+            border-radius: 60px; 
+            font-size: 40px; 
+            font-weight: 800; 
+            margin-top: 20px; 
+            z-index: 10; 
+            box-shadow: 0 15px 30px rgba(79, 70, 229, 0.3); 
+            border: none; 
+            cursor: pointer; 
+            transition: transform 0.2s;
+        }
+    </style>
+</head>
+<body>
+    <div class="feed-container">
+        <div class="deco-circle"></div>
+        <div class="deco-circle-2"></div>
+        
+        <div class="icon-box">🖨️✨</div>
+        
+        <h1 class="title">지금 바로<br><span class="highlight">선생님 반 급식판</span>을<br>만들어보세요!</h1>
+        
+        <div class="url-box">
+            <span class="url-icon">🔗</span> iep-food.vercel.app
+        </div>
+        
+        <p class="footer-text">특수교육 보조도구 IEP-ON</p>
+        
+        <button class="btn-large">프로필 링크에서 바로가기</button>
+    </div>
+</body>
+</html>

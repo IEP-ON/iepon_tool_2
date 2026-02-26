@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>글쓰기 도우미 피드 6 - 수정 & 인쇄</title>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        
+        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #333; font-family: 'Pretendard', sans-serif; }
+        .feed-container { 
+            width: 1080px; height: 1080px; background: #f9f0df; position: relative; overflow: hidden; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            box-shadow: 0 0 50px rgba(0,0,0,0.5); 
+        }
+        
+        .header { text-align: center; margin-bottom: 40px; z-index: 10; }
+        .step-badge { background: #be185d; color: white; padding: 10px 24px; border-radius: 50px; font-weight: 800; font-size: 22px; display: inline-block; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .title { font-size: 60px; font-weight: 900; color: #4a3b32; margin: 0 0 10px 0; line-height: 1.3; }
+        .highlight { color: #be185d; }
+        .subtitle { font-size: 32px; font-weight: 600; color: #786860; margin: 0; }
+        
+        .mockup-area {
+            width: 850px; z-index: 10; display: flex; gap: 20px; align-items: stretch;
+        }
+        
+        .edit-panel {
+            flex: 1; background: white; border-radius: 24px; padding: 25px;
+            box-shadow: 0 15px 30px rgba(74,59,50,0.1); border: 4px solid #fce7f3;
+            display: flex; flex-direction: column; gap: 15px;
+        }
+        .edit-title { font-size: 22px; font-weight: 800; color: #be185d; display: flex; align-items: center; gap: 8px; }
+        .edit-textarea {
+            flex: 1; background: #fdf2f8; border: 3px solid #fbcfe8; border-radius: 16px;
+            padding: 20px; font-size: 22px; font-weight: 600; color: #1c1917; line-height: 1.6;
+            font-family: serif; word-break: keep-all;
+        }
+        .edit-cursor { display: inline-block; width: 3px; height: 24px; background: #be185d; animation: blink 1s infinite; vertical-align: middle; margin-left: 2px; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        
+        .btn-row { display: flex; gap: 10px; }
+        .btn-edit { flex: 1; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; }
+        .btn-confirm { background: #be185d; color: white; }
+        .btn-cancel { background: #f5f5f4; color: #78716c; border: 2px solid #e7e5e4; }
+        
+        .print-panel {
+            width: 320px; background: white; border-radius: 24px; padding: 25px;
+            box-shadow: 0 15px 30px rgba(74,59,50,0.1); border: 4px solid #e7e5e4;
+            display: flex; flex-direction: column; align-items: center; gap: 15px;
+        }
+        .print-title { font-size: 20px; font-weight: 800; color: #44403c; display: flex; align-items: center; gap: 8px; }
+        
+        .grid-mockup {
+            width: 100%; background: #fafaf9; border: 3px solid #44403c; border-radius: 8px; padding: 12px;
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px;
+        }
+        .grid-cell {
+            aspect-ratio: 1; border: 1.5px solid #a8a29e; display: flex; align-items: center; justify-content: center;
+            font-size: 18px; font-family: serif; color: #a8a29e; position: relative;
+        }
+        .grid-cell::before { content: ''; position: absolute; width: 100%; height: 1px; background: #d6d3d1; opacity: 0.5; }
+        .grid-cell::after { content: ''; position: absolute; height: 100%; width: 1px; background: #d6d3d1; opacity: 0.5; }
+        
+        .opacity-bar { width: 100%; display: flex; align-items: center; gap: 8px; }
+        .bar-label { font-size: 16px; font-weight: 600; color: #78716c; white-space: nowrap; }
+        .bar-track { flex: 1; height: 8px; background: linear-gradient(to right, #e7e5e4, #44403c); border-radius: 8px; }
+        
+        .btn-print { width: 100%; height: 50px; background: #ea580c; color: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; gap: 8px; box-shadow: 0 8px 20px rgba(234,88,12,0.3); }
+        
+        .deco-circle { position: absolute; width: 800px; height: 800px; border-radius: 50%; background: #fbcfe8; opacity: 0.2; top: -200px; right: -200px; filter: blur(100px); }
+        .deco-circle-2 { position: absolute; width: 600px; height: 600px; border-radius: 50%; background: #fecdd3; opacity: 0.15; bottom: -150px; left: -150px; filter: blur(80px); }
+    </style>
+</head>
+<body>
+    <div class="feed-container">
+        <div class="deco-circle"></div>
+        <div class="deco-circle-2"></div>
+        
+        <div class="header">
+            <div class="step-badge">핵심 기능 4. 수정 & 인쇄</div>
+            <h1 class="title"><span class="highlight">직접 수정</span>하고<br>경필쓰기 칸에 인쇄!</h1>
+            <p class="subtitle">글자 진하기도 조절할 수 있어요</p>
+        </div>
+        
+        <div class="mockup-area">
+            <div class="edit-panel">
+                <div class="edit-title">✏️ 글 내용 수정</div>
+                <div class="edit-textarea">
+                    오늘 엄마랑 공원에 갔어요.<br>
+                    공원에서 자전거를 탔어요.<br>
+                    바람이 시원해서 좋았어요.<span class="edit-cursor"></span>
+                </div>
+                <div class="btn-row">
+                    <div class="btn-edit btn-confirm">✅ 수정 완료</div>
+                    <div class="btn-edit btn-cancel">✕ 취소</div>
+                </div>
+            </div>
+            
+            <div class="print-panel">
+                <div class="print-title">🖨️ 인쇄 미리보기</div>
+                <div class="grid-mockup">
+                    <div class="grid-cell">오</div>
+                    <div class="grid-cell">늘</div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell">엄</div>
+                    <div class="grid-cell">마</div>
+                    <div class="grid-cell">랑</div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell">공</div>
+                    <div class="grid-cell">원</div>
+                    <div class="grid-cell">에</div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell">갔</div>
+                    <div class="grid-cell">어</div>
+                    <div class="grid-cell">요</div>
+                    <div class="grid-cell">.</div>
+                </div>
+                <div class="opacity-bar">
+                    <div class="bar-label">연하게</div>
+                    <div class="bar-track"></div>
+                    <div class="bar-label">진하게</div>
+                </div>
+                <div class="btn-print">🖨️ 인쇄하기</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

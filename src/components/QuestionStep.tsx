@@ -46,6 +46,8 @@ export default function QuestionStep({ question, value, onChange, answers = {}, 
   const [customValue, setCustomValue] = useState('');
   // 격려 메시지 표시 상태
   const [showFeedback, setShowFeedback] = useState(false);
+  // 달력 표시 월 상태 (date 타입용)
+  const [calendarMonth, setCalendarMonth] = useState(new Date());
   
   // value가 옵션에 없으면 직접 입력된 값으로 간주
   useEffect(() => {
@@ -246,53 +248,116 @@ export default function QuestionStep({ question, value, onChange, answers = {}, 
           />
         );
 
-      case 'date':
-        // 특수교육 대상 학생을 위한 쉬운 날짜 선택
+      case 'date': {
         const today = new Date();
-        const formatDate = (date: Date) => {
-          const year = date.getFullYear();
-          const month = String(date.getMonth() + 1);
-          const day = String(date.getDate());
-          return `${year}년 ${month}월 ${day}일`;
+        const calYear = calendarMonth.getFullYear();
+        const calMonthIdx = calendarMonth.getMonth();
+        const DAY_LABELS = ['일', '월', '화', '수', '목', '금', '토'];
+
+        const formatDate = (d: Date) =>
+          `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`;
+
+        const daysInMonth = new Date(calYear, calMonthIdx + 1, 0).getDate();
+        const firstDayOfWeek = new Date(calYear, calMonthIdx, 1).getDay();
+
+        const isToday = (day: number) => {
+          const d = new Date(calYear, calMonthIdx, day);
+          return d.toDateString() === today.toDateString();
         };
-        
-        const dateOptions = [
-          { label: '오늘', icon: '📅', date: new Date(today) },
-          { label: '어제', icon: '⬅️', date: new Date(today.getTime() - 86400000) },
-          { label: '그제', icon: '⏪', date: new Date(today.getTime() - 86400000 * 2) },
-          { label: '지난주', icon: '📆', date: new Date(today.getTime() - 86400000 * 7) },
-        ];
-        
+        const isFuture = (day: number) => {
+          const d = new Date(calYear, calMonthIdx, day);
+          d.setHours(0, 0, 0, 0);
+          const t = new Date(today);
+          t.setHours(0, 0, 0, 0);
+          return d > t;
+        };
+        const isSelected = (day: number) =>
+          value === formatDate(new Date(calYear, calMonthIdx, day));
+
+        const canGoNext =
+          new Date(calYear, calMonthIdx + 1, 1) <=
+          new Date(today.getFullYear(), today.getMonth(), 1);
+
+        const cells: (number | null)[] = [];
+        for (let i = 0; i < firstDayOfWeek; i++) cells.push(null);
+        for (let i = 1; i <= daysInMonth; i++) cells.push(i);
+
         return (
-          <div className="grid grid-cols-1 xs:grid-cols-2 gap-3 sm:gap-4">
-            {dateOptions.map((opt) => {
-              const dateStr = formatDate(opt.date);
-              return (
-                <button
-                  key={opt.label}
-                  onClick={() => onChange(dateStr)}
+          <div className="select-none">
+            {/* 월 이동 헤더 */}
+            <div className="flex items-center justify-between mb-3 px-1">
+              <button
+                onClick={() => setCalendarMonth(new Date(calYear, calMonthIdx - 1, 1))}
+                className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-neutral-100 text-neutral-600 text-xl font-bold"
+              >
+                ‹
+              </button>
+              <span className="text-base sm:text-lg font-bold text-neutral-800">
+                {calYear}년 {calMonthIdx + 1}월
+              </span>
+              <button
+                onClick={() => canGoNext && setCalendarMonth(new Date(calYear, calMonthIdx + 1, 1))}
+                disabled={!canGoNext}
+                className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-neutral-100 text-neutral-600 text-xl font-bold disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                ›
+              </button>
+            </div>
+
+            {/* 요일 헤더 */}
+            <div className="grid grid-cols-7 mb-1">
+              {DAY_LABELS.map((d, i) => (
+                <div
+                  key={d}
                   className={clsx(
-                    "flex flex-col items-center justify-center p-4 sm:p-6 rounded-xl border-2 transition-all hover:scale-105 active:scale-95",
-                    value === dateStr
-                      ? "border-primary-500 bg-primary-50 ring-2 ring-primary-200"
-                      : "border-neutral-200 bg-white hover:border-primary-300"
+                    'text-center text-xs font-semibold py-1',
+                    i === 0 ? 'text-red-400' : i === 6 ? 'text-blue-400' : 'text-neutral-500'
                   )}
                 >
-                  <span className="text-2xl sm:text-3xl mb-1 sm:mb-2">{opt.icon}</span>
-                  <span className={clsx(
-                    "text-base sm:text-lg font-bold mb-0.5 sm:mb-1",
-                    value === dateStr ? "text-primary-700" : "text-neutral-800"
-                  )}>
-                    {opt.label}
-                  </span>
-                  <span className="text-xs text-neutral-500">
-                    {dateStr}
-                  </span>
+                  {d}
+                </div>
+              ))}
+            </div>
+
+            {/* 날짜 셀 */}
+            <div className="grid grid-cols-7 gap-0.5">
+              {cells.map((day, i) => (
+                <button
+                  key={i}
+                  onClick={() => day && !isFuture(day) && onChange(formatDate(new Date(calYear, calMonthIdx, day)))}
+                  disabled={!day || isFuture(day)}
+                  className={clsx(
+                    'h-9 sm:h-10 flex items-center justify-center rounded-lg text-sm sm:text-base font-medium transition-all',
+                    !day && 'invisible pointer-events-none',
+                    day && isFuture(day) && 'text-neutral-300 cursor-not-allowed',
+                    day && !isFuture(day) && isSelected(day) &&
+                      'bg-primary-500 text-white font-bold ring-2 ring-primary-300 scale-105',
+                    day && !isFuture(day) && isToday(day) && !isSelected(day) &&
+                      'text-primary-600 font-bold bg-primary-50 border border-primary-200',
+                    day && !isFuture(day) && !isToday(day) && !isSelected(day) &&
+                      'hover:bg-neutral-100',
+                    day && !isFuture(day) && !isSelected(day) && i % 7 === 0 && 'text-red-500',
+                    day && !isFuture(day) && !isSelected(day) && i % 7 === 6 && 'text-blue-500',
+                    day && !isFuture(day) && !isSelected(day) && i % 7 > 0 && i % 7 < 6 &&
+                      !isToday(day) && 'text-neutral-700'
+                  )}
+                >
+                  {day}
                 </button>
-              );
-            })}
+              ))}
+            </div>
+
+            {/* 선택된 날짜 표시 */}
+            {value && (
+              <div className="mt-4 p-3 bg-primary-50 rounded-xl border border-primary-200 text-center">
+                <span className="text-primary-700 font-semibold text-sm sm:text-base">
+                  📅 {value} 선택됨
+                </span>
+              </div>
+            )}
           </div>
         );
+      }
 
       case 'select':
         return (
@@ -342,6 +407,19 @@ export default function QuestionStep({ question, value, onChange, answers = {}, 
 
       // 🆕 선택 + 직접입력 하이브리드
       case 'select-with-custom':
+        // 생각해서 쓰기(level2)에서는 텍스트 입력만 제공
+        if (level === 'level2') {
+          return (
+            <textarea
+              value={value}
+              onChange={(e) => onChange(e.target.value)}
+              placeholder={question.customPlaceholder || question.placeholder || '직접 써 주세요'}
+              rows={3}
+              className="w-full p-3 sm:p-4 text-base sm:text-lg border-2 border-neutral-200 rounded-xl focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none transition-colors resize-none placeholder:text-neutral-400"
+              autoFocus
+            />
+          );
+        }
         return (
           <div className="space-y-4">
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">

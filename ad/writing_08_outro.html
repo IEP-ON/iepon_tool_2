@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>글쓰기 도우미 피드 8 - 아웃트로</title>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        
+        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #333; font-family: 'Pretendard', sans-serif; }
+        .feed-container { 
+            width: 1080px; height: 1080px; background: #f9f0df; position: relative; overflow: hidden; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            box-shadow: 0 0 50px rgba(0,0,0,0.5); text-align: center;
+        }
+        
+        .deco-circle { position: absolute; width: 800px; height: 800px; border-radius: 50%; background: #818cf8; opacity: 0.15; top: -200px; left: -200px; filter: blur(100px); }
+        .deco-circle-2 { position: absolute; width: 700px; height: 700px; border-radius: 50%; background: #f97316; opacity: 0.12; bottom: -150px; right: -150px; filter: blur(80px); }
+        
+        .icon-box { font-size: 120px; margin-bottom: 45px; text-shadow: 0 10px 20px rgba(0,0,0,0.1); z-index: 10; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        
+        .title { font-size: 78px; font-weight: 900; color: #4a3b32; margin: 0 0 40px 0; line-height: 1.3; z-index: 10; word-break: keep-all; }
+        .highlight { color: #ea580c; }
+        
+        .url-box { 
+            background: rgba(255, 255, 255, 0.9); border: 4px solid #fff; padding: 28px 60px; 
+            border-radius: 30px; font-size: 48px; font-weight: 800; color: #ea580c; 
+            margin: 0 0 50px 0; display: inline-flex; align-items: center; gap: 20px; z-index: 10; 
+            box-shadow: 0 20px 40px rgba(234, 88, 12, 0.15);
+        }
+        .url-icon { font-size: 46px; }
+        
+        .features-row {
+            display: flex; gap: 20px; z-index: 10; margin-bottom: 50px;
+        }
+        .feature-chip {
+            background: rgba(255,255,255,0.85); border: 3px solid #fff; border-radius: 50px;
+            padding: 14px 28px; font-size: 26px; font-weight: 700; color: #57534e;
+        }
+        
+        .footer-text { font-size: 34px; font-weight: 600; color: #786860; z-index: 10; margin-bottom: 35px; }
+        
+        .btn-large { 
+            background: #ea580c; color: white; padding: 28px 70px; border-radius: 60px; 
+            font-size: 38px; font-weight: 800; z-index: 10; 
+            box-shadow: 0 15px 30px rgba(234, 88, 12, 0.3); border: none; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="feed-container">
+        <div class="deco-circle"></div>
+        <div class="deco-circle-2"></div>
+        
+        <div class="icon-box">✏️✨</div>
+        
+        <h1 class="title">지금 바로<br><span class="highlight">우리 반 글쓰기</span>를<br>시작해보세요!</h1>
+        
+        <div class="features-row">
+            <div class="feature-chip">🆓 무료</div>
+            <div class="feature-chip">📱 모바일 OK</div>
+            <div class="feature-chip">🖨️ 인쇄 가능</div>
+            <div class="feature-chip">🔒 개인정보 안전</div>
+        </div>
+        
+        <div class="url-box">
+            <span class="url-icon">🔗</span> iepon.site
+        </div>
+        
+        <p class="footer-text">특수교육 보조도구 IEP-ON</p>
+        
+        <button class="btn-large">프로필 링크에서 바로가기</button>
+    </div>
+</body>
+</html>

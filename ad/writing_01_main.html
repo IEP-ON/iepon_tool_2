@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>글쓰기 도우미 피드 1 - 메인 소개</title>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        
+        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #333; font-family: 'Pretendard', sans-serif; }
+        .feed-container { 
+            width: 1080px; 
+            height: 1080px; 
+            background: #f9f0df; 
+            position: relative; 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            box-shadow: 0 0 50px rgba(0,0,0,0.5); 
+        }
+        
+        .content { 
+            text-align: center; 
+            z-index: 10; 
+            padding: 70px 60px; 
+            background: rgba(255, 255, 255, 0.95); 
+            border-radius: 40px; 
+            box-shadow: 0 20px 40px rgba(74, 59, 50, 0.1); 
+            border: 4px solid #fff; 
+            max-width: 850px;
+            width: 80%;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .logo { width: 110px; height: 110px; margin-bottom: 35px; }
+        
+        .badge { 
+            background: #ea580c; 
+            color: white; 
+            padding: 12px 30px; 
+            border-radius: 50px; 
+            font-weight: 800; 
+            font-size: 28px; 
+            display: inline-block; 
+            margin-bottom: 30px; 
+            letter-spacing: 1px; 
+        }
+        
+        .title { 
+            font-size: 72px; 
+            font-weight: 900; 
+            color: #4a3b32; 
+            margin: 0 0 20px 0; 
+            line-height: 1.3; 
+            word-break: keep-all; 
+        }
+        
+        .highlight { color: #ea580c; }
+        
+        .subtitle { 
+            font-size: 34px; 
+            font-weight: 600; 
+            color: #786860; 
+            margin: 0 0 50px 0; 
+            line-height: 1.5; 
+        }
+        
+        .type-grid {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .type-chip {
+            background: #fff7ed;
+            border: 3px solid #fed7aa;
+            border-radius: 50px;
+            padding: 14px 28px;
+            font-size: 28px;
+            font-weight: 700;
+            color: #9a3412;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .deco-circle-1 { position: absolute; width: 600px; height: 600px; border-radius: 50%; background: #fcd34d; opacity: 0.2; top: -150px; right: -150px; filter: blur(80px); }
+        .deco-circle-2 { position: absolute; width: 700px; height: 700px; border-radius: 50%; background: #fdba74; opacity: 0.15; bottom: -200px; left: -200px; filter: blur(100px); }
+    </style>
+</head>
+<body>
+    <div class="feed-container">
+        <div class="deco-circle-1"></div>
+        <div class="deco-circle-2"></div>
+        
+        <div class="content">
+            <svg class="logo" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="100" height="100" rx="20" fill="#ea580c"/>
+                <path d="M35 70 L35 30 L55 30 Q65 30 65 40 Q65 50 55 50 L35 50" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <path d="M55 50 L70 70" stroke="white" stroke-width="6" stroke-linecap="round"/>
+                <circle cx="30" cy="25" r="4" fill="#fcd34d"/>
+            </svg>
+            
+            <div class="badge">무료 특수교육 보조도구</div>
+            <h1 class="title">"선생님,<br><span class="highlight">글쓰기</span> 어려워요..."</h1>
+            <p class="subtitle">단계별 질문에 답하면<br>나만의 글이 뚝딱!</p>
+            
+            <div class="type-grid">
+                <div class="type-chip">🎨 일기</div>
+                <div class="type-chip">🔍 관찰</div>
+                <div class="type-chip">✉️ 편지</div>
+                <div class="type-chip">🚌 체험</div>
+                <div class="type-chip">😊 자기소개</div>
+                <div class="type-chip">📚 독서</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Noto_Sans_KR } from "next/font/google";
 import Link from "next/link";
 import Image from "next/image";
-import { History } from "lucide-react";
+import { History, PenLine } from "lucide-react";
 import "./globals.css";
 
 const notoSansKr = Noto_Sans_KR({
@@ -11,8 +11,8 @@ const notoSansKr = Noto_Sans_KR({
 });
 
 export const metadata: Metadata = {
-  title: "AI 글쓰기 도우미",
-  description: "특수교육대상 학생들을 위한 단계별 AI 글쓰기 도우미",
+  title: "글쓰기 도우미",
+  description: "특수교육대상 학생들을 위한 단계별 글쓰기 도우미",
 };
 
 export default function RootLayout({
@@ -37,13 +37,22 @@ export default function RootLayout({
                 <h1 className="text-xl font-bold text-primary-600">글쓰기 도우미</h1>
               </Link>
               
-              <Link 
-                href="/history" 
-                className="p-2 text-neutral-500 hover:text-primary-600 hover:bg-neutral-50 rounded-full transition-colors"
-                aria-label="작성 이력"
-              >
-                <History className="w-6 h-6" />
-              </Link>
+              <div className="flex items-center gap-1">
+                <Link 
+                  href="/" 
+                  className="p-2 text-neutral-500 hover:text-primary-600 hover:bg-neutral-50 rounded-full transition-colors"
+                  aria-label="새 글쓰기"
+                >
+                  <PenLine className="w-6 h-6" />
+                </Link>
+                <Link 
+                  href="/history" 
+                  className="p-2 text-neutral-500 hover:text-primary-600 hover:bg-neutral-50 rounded-full transition-colors"
+                  aria-label="작성 이력"
+                >
+                  <History className="w-6 h-6" />
+                </Link>
+              </div>
             </div>
           </header>
           {children}
